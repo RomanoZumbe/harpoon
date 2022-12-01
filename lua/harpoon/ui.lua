@@ -3,10 +3,7 @@ local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
 local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
-local path_ok, path = pcall(require, "plenary.path")
-if not path_ok then
-    return
-end
+local path = pcall(require, "plenary.path")
 
 local M = {}
 local files = {}
