@@ -3,6 +3,10 @@ local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
 local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
+local path_ok, path = pcall(require, "plenary.path")
+if not path_ok then
+    return
+end
 
 local M = {}
 
@@ -70,6 +74,19 @@ local function get_menu_items()
     return indices
 end
 
+function getContents()
+    local contents = {}
+    for idx = 1, Marked.get_length() do
+        local file = Marked.get_marked_file_name(idx)
+        if file == "" then
+            file = "(empty)"
+        end
+        contents[idx] = path.new(string.format("%s", file))
+            :shorten(1, { -2, -1 })
+    end
+    return contents
+end
+
 function M.toggle_quick_menu()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
@@ -80,17 +97,10 @@ function M.toggle_quick_menu()
     local win_info = create_window()
     local contents = {}
     local global_config = harpoon.get_global_settings()
+    contents = getContents()
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
-
-    for idx = 1, Marked.get_length() do
-        local file = Marked.get_marked_file_name(idx)
-        if file == "" then
-            file = "(empty)"
-        end
-        contents[idx] = string.format("%s", file)
-    end
 
     vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
     vim.api.nvim_buf_set_name(Harpoon_bufh, "harpoon-menu")
