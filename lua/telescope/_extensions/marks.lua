@@ -18,6 +18,23 @@ local function filter_empty_string(list)
     return next
 end
 
+function getContents(shortened)
+    local contents = {}
+    for idx = 1, Marked.get_length() do
+        local file = Marked.get_marked_file_name(idx)
+        if file == "" then
+            file = "(empty)"
+        end
+        if shortened then
+            contents[idx] = path.new(string.format("%s", file))
+                :shorten(1, { -2, -1 })
+        else
+            contents[idx] = string.format("%s", file)
+        end
+    end
+    return contents
+end
+
 local generate_new_finder = function()
     return finders.new_table({
         results = filter_empty_string(harpoon.get_mark_config().marks),
@@ -27,7 +44,7 @@ local generate_new_finder = function()
                 separator = " - ",
                 items = {
                     { width = 2 },
-                    { width = 50 },
+                    { width = entry.filename },
                     { remaining = true },
                 },
             })
