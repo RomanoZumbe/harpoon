@@ -167,6 +167,8 @@ function M.setup(config)
         c_config = {}
     end
 
+    config.shortenPath()
+
     local complete_config = merge_tables({
         projects = {},
         global_settings = {
