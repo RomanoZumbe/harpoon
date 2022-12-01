@@ -6,6 +6,7 @@ local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
+local path = require("plenary.path")
 
 local function filter_empty_string(list)
     local next = {}
@@ -22,7 +23,11 @@ local generate_new_finder = function()
     return finders.new_table({
         results = filter_empty_string(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
+            local line = path.new(entry.filename):shorten(1, { -2, -1 })
+                .. ":"
+                .. entry.row
+                .. ":"
+                .. entry.col
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
