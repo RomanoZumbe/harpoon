@@ -6,7 +6,7 @@ local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
-local path = pcall(require, "plenary.path")
+local path = require("plenary.path")
 
 local function filter_empty_string(list)
     local next = {}
