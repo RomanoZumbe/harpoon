@@ -3,7 +3,6 @@ local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
 local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
-local path = require("plenary.path")
 
 local M = {}
 local files = {}
@@ -74,14 +73,14 @@ end
 
 function getContents(shortened)
     local contents = {}
+    local global_config = harpoon.get_global_settings()
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
         if file == "" then
             file = "(empty)"
         end
-        if shortened then
-            contents[idx] = path.new(string.format("%s", file))
-                :shorten(1, { -2, -1 })
+        if shortened and global_config.shortenPath ~= nil then
+            contents[idx] = global_config.shortenPath(file)
         else
             contents[idx] = string.format("%s", file)
         end
