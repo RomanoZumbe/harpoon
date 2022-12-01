@@ -9,6 +9,7 @@ if not path_ok then
 end
 
 local M = {}
+local files = {}
 
 Harpoon_win_id = nil
 Harpoon_bufh = nil
@@ -74,15 +75,19 @@ local function get_menu_items()
     return indices
 end
 
-function getContents()
+function getContents(shortened)
     local contents = {}
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
         if file == "" then
             file = "(empty)"
         end
-        contents[idx] = path.new(string.format("%s", file))
-            :shorten(1, { -2, -1 })
+        if shortened then
+            contents[idx] = path.new(string.format("%s", file))
+                :shorten(1, { -2, -1 })
+        else
+            contents[idx] = string.format("%s", file)
+        end
     end
     return contents
 end
@@ -97,7 +102,7 @@ function M.toggle_quick_menu()
     local win_info = create_window()
     local contents = {}
     local global_config = harpoon.get_global_settings()
-    contents = getContents()
+    contents = getContents(true)
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
@@ -162,7 +167,8 @@ end
 
 function M.on_menu_save()
     log.trace("on_menu_save()")
-    Marked.set_mark_list(get_menu_items())
+    -- Marked.set_mark_list(get_menu_items())
+    Marked.set_mark_list(getContents(false))
 end
 
 local function get_or_create_buffer(filename)
